@@ -62,7 +62,7 @@ body {
     letter-spacing: 1px;
 }
 .page-title {
-    color: black; /* or any other color you like */
+    color: black; 
     font-family:Courier New, Courier, monospace;
     font-size: 2rem;
     font-weight: 700;
