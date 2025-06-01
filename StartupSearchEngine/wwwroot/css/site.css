@@ -1,0 +1,74 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+video {
+    width: 100%;
+    max-width: 350px;
+}
+/* Full-page background */
+body {
+    background-image: url('../lib/mouse.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Optional: Overlay effect when content loads */
+.overlay-container {
+    background-color: rgba(255, 255, 255, 0.9); /* White with 90% opacity */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Optional: Add subtle fade */
+.fade-in {
+    animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+.brand-title {
+    color: #D2691E !important; /* Chocolate (good on white/off-brown) */
+    font-family: 'Times New Roman';
+    font-weight: bold;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+}
+.page-title {
+    color: black; /* or any other color you like */
+    font-family:Courier New, Courier, monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    /*text-align: center;*/ /* <--- Center horizontally */
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+

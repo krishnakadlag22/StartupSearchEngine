@@ -1,0 +1,120 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<StartupSearchEngine.Models.CleanedStartup>
+
+@{
+    var searchTerm = Context.Request.Query["searchTerm"].ToString();
+    var searchBy = Context.Request.Query["searchBy"].ToString();
+
+    string Highlight(string text)
+    {
+        if (string.IsNullOrEmpty(searchTerm) || string.IsNullOrEmpty(text))
+        {
+            return text;
+        }
+        var regex = new System.Text.RegularExpressions.Regex(searchTerm, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        return regex.Replace(text, m => $"<span style='background-color: yellow; font-weight: bold;'>{m.Value}</span>");
+    }
+
+    var searchByOptions = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "", Text = "Search By" },
+        new SelectListItem { Value = "Company", Text = "Company", Selected = searchBy == "Company" },
+        new SelectListItem { Value = "Founders", Text = "Founders", Selected = searchBy == "Founders" },
+        new SelectListItem { Value = "InvestmentStage", Text = "Investment Stage", Selected = searchBy == "InvestmentStage" },
+        new SelectListItem { Value = "StartingYear", Text = "Starting Year", Selected = searchBy == "StartingYear" },
+        new SelectListItem { Value = "Industry", Text = "Industry", Selected = searchBy == "Industry" }
+    };
+}
+<!-- Heading + Logo Row -->
+<div class="d-flex justify-content-center align-items-center mt-4 mb-3">
+   
+    <h2 class="page-title mb-0 text-center">Find Indian Startups</h2>
+</div>
+
+<!-- Search Form -->
+<form asp-action="Index" method="get" class="row g-3 mb-4 align-items-center">
+    <div class="col-md-5">
+        <div class="input-group">
+            <input type="text" name="searchTerm" class="form-control" placeholder="Search anything..." value="@searchTerm" />
+            <button type="submit" class="btn" style="background-color: blue; color: white;">
+                <span class="material-icons">search</span>
+            </button>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <select name="searchBy" class="form-select" asp-items="searchByOptions"></select>
+    </div>
+</form>
+
+<!-- Only show video if no search is made -->
+@if (string.IsNullOrWhiteSpace(searchTerm))
+{
+    <div class="text-center mb-4">
+        <video autoplay muted loop playsinline style="max-width: 230px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+            <source src="~/lib/main logo.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="alert alert-warning text-center">Please enter a search term to find startups.</div>
+}
+else if (!Model.Any())
+{
+    <div class="alert alert-danger">
+        No results found for "<strong>@searchTerm</strong>". Try something else.
+    </div>
+}
+else
+{
+    <div class="overlay-container fade-in">
+        <div class="table-responsive">
+            <p class="text-muted">Showing @Model.Count of @Model.TotalItemCount results for "<strong>@searchTerm</strong>"</p>
+            
+
+            @* <table class="table table-bordered table-hover"> *@
+            @* <thead class="table-light"> *@
+            <table class="table table-bordered table-hover table-sm align-middle">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th>Company</th>
+                        <th>Founders</th>
+                        <th>Investment Stage</th>
+                        <th>Starting Year</th>
+                        <th>Industry</th>
+                        <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>@Html.Raw(Highlight(s.Company))</td>
+                        <td>@Html.Raw(Highlight(s.Founders))</td>
+                        <td>@Html.Raw(Highlight(s.InvestmentStage))</td>
+                        <td>@Html.Raw(Highlight(s.StartingYear?.ToString()))</td>
+                        <td>@Html.Raw(Highlight(s.Industry))</td>
+                        <td>@Html.Raw(Highlight(s.Description))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation" class="d-flex justify-content-center mt-3">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchTerm, searchBy }),
+                new PagedListRenderOptions
+    {
+        UlElementClasses = new[] { "pagination", "justify-content-center" },
+        LiElementClasses = new[] { "page-item" },
+        PageClasses = new[] { "page-link" },
+        LinkToPreviousPageFormat = "« Prev",
+        LinkToNextPageFormat = "Next »",
+        MaximumPageNumbersToDisplay = 5,
+        DisplayLinkToFirstPage = PagedListDisplayMode.Never,
+        DisplayLinkToLastPage = PagedListDisplayMode.Never,
+    })
+    </nav>
+}
